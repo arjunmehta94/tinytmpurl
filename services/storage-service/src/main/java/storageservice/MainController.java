@@ -35,7 +35,7 @@ public class MainController {
         urlMapper.setResource(id);
         urlMapper.setValue(restUrlMapper.getResource());
         urlMapper.setExpiration(restUrlMapper.getExpiration());
-        if (findUrlMapper(id) != null) {
+        if (findUrlMapper(id) == null) {
             urlMapperRepository.save(urlMapper);
             return id;
         }
