@@ -8,5 +8,5 @@ public interface ResourceMapper {
 
     String createResource(String resource, String expiry) throws IOException, NoSuchAlgorithmException;
 
-    void deleteResource(String resourceId);
+    void deleteResource(String resourceId) throws IOException;
 }

@@ -29,8 +29,11 @@ public class Resource {
         return postMethod(url, resourceId, resource, expiry);
     }
 
-    public static void deleteResource(Environment env, String resourceId) {
-
+    public static void deleteResource(Environment env, String resourceId) throws IOException {
+        String port = env.getProperty("storageservice.port");
+        String endpoint = "url/" + resourceId;
+        String url = "http://127.0.0.1:" + port + "/" + endpoint;
+        deleteMethod(url);
     }
 
     private static String getMethod(String url) throws IOException {
@@ -90,5 +93,16 @@ public class Resource {
         in.close();
 
         return response.toString();
+    }
+
+    private static void deleteMethod(String url) throws IOException {
+        URL urlObj = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) urlObj.openConnection();
+        connection.setDoOutput(true);
+        connection.setRequestMethod("DELETE");
+
+        connection.connect();
+        int responseCode = connection.getResponseCode();
+        return;
     }
 }

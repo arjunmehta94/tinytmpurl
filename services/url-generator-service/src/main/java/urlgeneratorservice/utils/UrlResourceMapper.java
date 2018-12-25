@@ -23,15 +23,19 @@ public class UrlResourceMapper implements ResourceMapper {
 
     @Override
     public String createResource(String resource, String expiry) throws IOException, NoSuchAlgorithmException {
-        int substring = Integer.parseInt(env.getProperty("hash.length"));
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        byte[] arr = md.digest(resource.getBytes());
-        String resourceId = Base64.getEncoder().encodeToString(arr);
-        return Resource.createResource(env, resourceId.substring(0, substring + 1), resource, expiry);
+        String resourceId = generateResourceId(resource);
+        return Resource.createResource(env, resourceId, resource, expiry);
     }
 
     @Override
-    public void deleteResource(String resourceId) {
+    public void deleteResource(String resourceId) throws IOException {
         Resource.deleteResource(env, resourceId);
+    }
+
+    private String generateResourceId(String resource) throws NoSuchAlgorithmException {
+        int substring = Integer.parseInt(env.getProperty("hash.length"));
+        byte[] arr = MessageDigest.getInstance("MD5").digest(resource.getBytes());
+        String resourceId = Base64.getEncoder().encodeToString(arr);
+        return resourceId.substring(0, substring + 1);
     }
 }

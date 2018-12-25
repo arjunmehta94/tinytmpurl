@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 import urlgeneratorservice.utils.RestUrlResource;
@@ -35,6 +36,11 @@ public class MainController {
         String resource = restUrlResource.getResource();
         String expiration = restUrlResource.getExpiration();
         return urlResourceMapper.createResource(resource, expiration);
+    }
+
+    @DeleteMapping("/url/{hash}")
+    public void deleteUrlMapping(@PathVariable String hash) throws IOException {
+        urlResourceMapper.deleteResource(hash);
     }
 
 
