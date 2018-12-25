@@ -1,15 +1,7 @@
 package storageservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import storageservice.utils.UrlMapperRepository;
 import storageservice.utils.models.UrlMapper;
@@ -25,7 +17,7 @@ public class MainController {
 
     @GetMapping(path="/url/{hash}")
     public String getUrl(@PathVariable String hash) {
-        return findUrlMapper(hash);
+        return findUrlMapper(hash).getValue();
     }
 
     @PostMapping(path="/url", consumes = "application/json")
@@ -42,10 +34,19 @@ public class MainController {
         return null;
     }
 
-    String findUrlMapper(String id) {
+    @DeleteMapping(path="/url/{hash}")
+    public void deleteUrlMapping(@PathVariable String hash) {
+        UrlMapper obj = findUrlMapper(hash);
+        if (obj != null) {
+            urlMapperRepository.delete(obj);
+        }
+        return;
+    }
+
+    UrlMapper findUrlMapper(String id) {
         Optional<UrlMapper> obj = urlMapperRepository.findById(id);
         if (obj.isPresent()) {
-            return obj.get().getValue();
+            return obj.get();
         }
         return null;
     }
