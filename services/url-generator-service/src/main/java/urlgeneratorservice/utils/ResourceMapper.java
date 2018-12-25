@@ -1,9 +1,12 @@
 package urlgeneratorservice.utils;
 
-public interface ResourceMapper {
-    String getResource(String resourceId);
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
-    String createResource(String resource, int expiry);
+public interface ResourceMapper {
+    String getResource(String resourceId) throws IOException;
+
+    String createResource(String resource, String expiry) throws IOException, NoSuchAlgorithmException;
 
     void deleteResource(String resourceId);
 }

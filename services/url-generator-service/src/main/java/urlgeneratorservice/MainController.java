@@ -8,7 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
+import urlgeneratorservice.utils.RestUrlResource;
 import urlgeneratorservice.utils.UrlResourceMapper;
+
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 @RestController("/")
 public class MainController {
@@ -21,8 +26,15 @@ public class MainController {
     }
 
     @GetMapping("/url/{hash}")
-    public String getUrl(@PathVariable String hash) {
+    public String getUrl(@PathVariable String hash) throws IOException {
         return urlResourceMapper.getResource(hash);
+    }
+
+    @PostMapping("/url")
+    public String createUrl(@RequestBody RestUrlResource restUrlResource) throws IOException, NoSuchAlgorithmException {
+        String resource = restUrlResource.getResource();
+        String expiration = restUrlResource.getExpiration();
+        return urlResourceMapper.createResource(resource, expiration);
     }
 
 

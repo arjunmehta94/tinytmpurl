@@ -5,6 +5,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+
 @Service
 public class UrlResourceMapper implements ResourceMapper {
 
@@ -12,19 +17,21 @@ public class UrlResourceMapper implements ResourceMapper {
     private Environment env;
 
     @Override
-    public String getResource(String resourceId) {
-        return Resource.getResource(resourceId);
+    public String getResource(String resourceId) throws IOException {
+        return Resource.getResource(env, resourceId);
     }
 
     @Override
-    public String createResource(String resource, int expiry) {
+    public String createResource(String resource, String expiry) throws IOException, NoSuchAlgorithmException {
         int substring = Integer.parseInt(env.getProperty("hash.length"));
-        String resourceId = new String(DigestUtils.md5Digest(resource.getBytes()));
-        return Resource.createResource(resourceId.substring(0, substring + 1), resource, expiry);
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] arr = md.digest(resource.getBytes());
+        String resourceId = Base64.getEncoder().encodeToString(arr);
+        return Resource.createResource(env, resourceId.substring(0, substring + 1), resource, expiry);
     }
 
     @Override
     public void deleteResource(String resourceId) {
-        Resource.deleteResource(resourceId);
+        Resource.deleteResource(env, resourceId);
     }
 }
