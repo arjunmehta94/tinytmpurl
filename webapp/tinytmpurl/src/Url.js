@@ -1,7 +1,17 @@
 import React, { Component } from 'react';
 import DateTimePicker from 'react-datetime-picker';
-import axios from 'axios';
+import { postUrl } from './utils/urlmapper';
 
+class UrlResult extends Component {
+  render() {
+    return (
+      <div className="result">
+        <div>Here is the result:</div>
+        <div>{this.props.result}</div>
+      </div>
+    );
+  }
+}
 class Url extends Component {
 
   constructor(props) {
@@ -9,7 +19,8 @@ class Url extends Component {
     this.state = {
       email: '',
       url: '',
-      date: new Date()
+      date: new Date(),
+      result: null
     }
   }
 
@@ -32,26 +43,23 @@ class Url extends Component {
   }
 
   handleSubmit() {
-    console.log('email', this.state.email);
-    console.log('url', this.state.url);
-    console.log('date', this.state.date);
-    const date = this.state.date.toISOString();
-    axios.post('http://127.0.0.1:8090/url', {
-      email: this.state.email,
-      resource: this.state.url,
-      expiration: date
-    })
-        .then(function(response) {
-          console.log('response');
-          console.log(response);
-          //window.location = response.data;
-        }).catch(function(error) {
-          console.log(error);
+    postUrl(this.state.email, this.state.url, this.state.date)
+      .then(function(response) {
+        console.log(response);
+        const url = 'https://tmptinyurl.com/' + response.data;
+        this.setState({
+          result: url
         })
+      }.bind(this), function(error) {
+        console.log(error);
+        this.setState({
+          result: 'Sorry! Something went wrong'
+        })
+      }.bind(this));
   }
 
   render() {
-    return (
+    return !this.state.result ? (
       <div className="Url">
         <div className="email">
             <input type="text" name="email" value={this.state.email}
@@ -59,7 +67,7 @@ class Url extends Component {
             onChange={this.handleEmailChange.bind(this)} />
         </div>
         <div className="url">
-            <input size="200" type="text" name="url" value={this.state.url}
+            <input size="200" type="url" name="url" value={this.state.url}
             placeholder="https://www.google.com/"
             onChange={this.handleUrlChange.bind(this)} />
         </div>
@@ -70,7 +78,7 @@ class Url extends Component {
         </div>
         <button onClick={this.handleSubmit.bind(this)}>Submit</button>
       </div>
-    );
+    ) : <UrlResult result={this.state.result} />;
   }
 }
 

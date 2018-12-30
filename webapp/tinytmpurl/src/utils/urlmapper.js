@@ -1,11 +1,19 @@
-import $ from 'jquery';
+import axios from 'axios';
 
-// function getUrl(url) {
-//   $.get(url, function(data, status) {
-//     console.log('data', data);
-//   });
-// }
+function getUrl(url) {
+  return axios.get('http://127.0.0.1:8090/url/' + url);
+}
 
-// export {
-//   getUrl
-// }
+function postUrl(email, resource, expiration) {
+  const date = expiration.toISOString();
+  return axios.post('http://127.0.0.1:8090/url', {
+    email: email,
+    resource: resource,
+    expiration: date
+  });
+}
+
+export {
+  getUrl,
+  postUrl
+}

@@ -1,31 +1,40 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import { getUrl } from './utils/urlmapper';
+
+class BadUrl extends Component {
+
+  render() {
+    return (
+      <div className="badurl">
+        <div>Sorry!</div>
+        <div>{this.props.url} is not a valid mapping</div>
+      </div>
+    );
+  }
+}
 
 class Redirect extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      url: props.match.params.route
+      url: props.match.params.route,
+      badUrl: false
     }
   }
 
   componentDidMount() {
-    axios.get('http://127.0.0.1:8090/url/' + this.state.url)
-        .then(function(response) {
-          console.log(response.data);
-          window.location = response.data;
-        }).catch(function(error) {
-          console.log(error);
-        })
+    getUrl(this.state.url)
+      .then(function(response) {
+        window.location = response.data;
+      }, function(error) {
+        this.setState({
+          badUrl: true
+        });
+      }.bind(this));
   }
 
   render() {
-    return (
-      <div className="Redirect">
-        <div>go!</div>
-        <div>{this.state.url}</div>
-      </div>
-    );
+    return this.state.badUrl ? <BadUrl url={this.state.url}/> : null;
   }
 }
 
