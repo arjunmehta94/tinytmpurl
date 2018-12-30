@@ -22,16 +22,21 @@ public class MainController {
 
     @PostMapping(path="/url", consumes = "application/json")
     public String createUrlMapping(@RequestBody RestUrlMapper restUrlMapper) {
-        UrlMapper urlMapper = new UrlMapper();
         String id = restUrlMapper.getResourceId();
-        urlMapper.setResource(id);
-        urlMapper.setValue(restUrlMapper.getResource());
-        urlMapper.setExpiration(restUrlMapper.getExpiration());
-        if (findUrlMapper(id) == null) {
+        UrlMapper item = findUrlMapper(id);
+        if (item == null) {
+            UrlMapper urlMapper = new UrlMapper();
+            urlMapper.setResource(id);
+            urlMapper.setValue(restUrlMapper.getResource());
+            urlMapper.setExpiration(restUrlMapper.getExpiration());
             urlMapperRepository.save(urlMapper);
-            return id;
+        } else {
+            if (item.getExpiration() != restUrlMapper.getExpiration()) {
+                item.setExpiration(restUrlMapper.getExpiration());
+                urlMapperRepository.save(item);
+            }
         }
-        return null;
+        return id;
     }
 
     @DeleteMapping(path="/url/{hash}")
