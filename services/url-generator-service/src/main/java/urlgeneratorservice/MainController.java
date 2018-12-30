@@ -4,12 +4,7 @@
 package urlgeneratorservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import urlgeneratorservice.utils.RestUrlResource;
 import urlgeneratorservice.utils.UrlResourceMapper;
 
@@ -21,16 +16,19 @@ public class MainController {
     @Autowired
     private UrlResourceMapper urlResourceMapper;
 
+
     @GetMapping
     public String getGreeting() {
         return "Hello world.";
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/url/{hash}")
     public String getUrl(@PathVariable String hash) throws IOException {
         return urlResourceMapper.getResource(hash);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/url")
     public String createUrl(@RequestBody RestUrlResource restUrlResource) throws IOException, NoSuchAlgorithmException {
         String resource = restUrlResource.getResource();
