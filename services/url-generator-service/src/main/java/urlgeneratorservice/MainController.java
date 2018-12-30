@@ -32,8 +32,9 @@ public class MainController {
     @PostMapping("/url")
     public String createUrl(@RequestBody RestUrlResource restUrlResource) throws IOException, NoSuchAlgorithmException {
         String resource = restUrlResource.getResource();
+        String email = restUrlResource.getEmail();
         String expiration = restUrlResource.getExpiration();
-        return urlResourceMapper.createResource(resource, expiration);
+        return urlResourceMapper.createResource(email, resource, expiration);
     }
 
     @DeleteMapping("/url/{hash}")
