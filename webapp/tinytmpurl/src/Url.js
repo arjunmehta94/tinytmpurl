@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import DateTimePicker from 'react-datetime-picker';
 import { postUrl } from './utils/urlmapper';
+import { isEmail, isDateTime } from './utils/validation';
+import UrlInput from './components/url';
 
 class UrlResult extends Component {
   render() {
@@ -25,21 +27,34 @@ class Url extends Component {
   }
 
   handleEmailChange(event) {
-    this.setState({
-      email: event.target.value
-    });
+    const email = event.target.value;
+    if (isEmail(email)) {
+      this.setState({
+        email: email
+      });
+    } else {
+      this.setState({
+        result: 'Please enter valid email'
+      })
+    }
   }
 
-  handleUrlChange(event) {
+  handleUrlChange(url) {
     this.setState({
-      url: event.target.value
+      url: url
     });
   }
 
   handleDateChange(date) {
-    this.setState({
-      date: date
-    });
+    if (isDateTime(date)) {
+      this.setState({
+        date: date
+      });
+    } else {
+      this.setState({
+        result: 'Please enter valid future date'
+      })
+    }
   }
 
   handleSubmit() {
@@ -66,11 +81,7 @@ class Url extends Component {
             placeholder="abc@def.com"
             onChange={this.handleEmailChange.bind(this)} />
         </div>
-        <div className="url">
-            <input size="200" type="url" name="url" value={this.state.url}
-            placeholder="https://www.google.com/"
-            onChange={this.handleUrlChange.bind(this)} />
-        </div>
+        <UrlInput handleUrlChange={this.handleUrlChange.bind(this)} />
         <div className="date">
             <DateTimePicker
               onChange={this.handleDateChange.bind(this)}
